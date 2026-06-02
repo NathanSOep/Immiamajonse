@@ -1,5 +1,14 @@
-import {Actor, CollisionType, Color, Keys, Rectangle, Vector} from "excalibur";
+import {
+  Actor,
+  CollisionType,
+  Color,
+  Keys,
+  Rectangle,
+  Resource,
+  Vector,
+} from "excalibur";
 import {Floor} from "./floor.js";
+import {Resources} from "./resources.js";
 
 export class Player extends Actor {
   // Speed
@@ -15,8 +24,8 @@ export class Player extends Actor {
   coyote;
   constructor() {
     super({
-      width: 8,
-      height: 8,
+      width: 16,
+      height: 16,
       collisionType: CollisionType.Active,
       color: Color.Red,
     });
@@ -36,6 +45,9 @@ export class Player extends Actor {
   }
   onInitialize(engine) {
     this.pos = new Vector(3, 0);
+    this.graphics.use(
+      Resources.Indiana.toSprite({destSize: {width: 16, height: 16}}),
+    );
 
     // Check if on ground
     this.on("collisionstart", (event) => this.hitSomething(event));
