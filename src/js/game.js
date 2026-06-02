@@ -7,6 +7,7 @@ import {
   SolverStrategy,
   vec,
   CollisionType,
+  Camera,
 } from "excalibur";
 import {Resources, ResourceLoader} from "./resources.js";
 import {Player} from "./player.js";
@@ -26,11 +27,15 @@ export class Game extends Engine {
   startGame() {
     // Physics configuration
     this.currentScene.physics.config.solver = SolverStrategy.Arcade;
-    this.currentScene.physics.config.gravity = vec(0, 1500);
+    this.currentScene.physics.config.gravity = vec(0, 400);
 
-    this.add(new Floor());
+    Resources.Level1.addToScene(this.currentScene);
+
     const player = new Player();
     this.add(player);
+
+    // Camera FOV
+    this.currentScene.camera.zoom = 2;
   }
 }
 

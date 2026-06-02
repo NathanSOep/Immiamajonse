@@ -2,108 +2,122 @@ import {Actor, CollisionType, Color, Keys, Rectangle, Vector} from "excalibur";
 import {Floor} from "./floor.js";
 
 export class Player extends Actor {
-  topSpeed;
-  accel;
-  decel;
-  jumpSpeed;
-  jumps;
+  // Speed
+  moveSpeed;
   facingRight;
   newSpeed;
-  keyHeld;
+  drag;
+
+  // Jumps
+  jumpHeight;
+  jumps;
   isOnGround;
+  coyote;
   constructor() {
     super({
-      width: 30,
-      height: 30,
+      width: 8,
+      height: 8,
       collisionType: CollisionType.Active,
-    });
-    const sprite = new Rectangle({
-      width: 30,
-      height: 30,
       color: Color.Red,
     });
 
     // Movement
-    this.keyHeld = false;
-    this.topSpeed = 700;
-    this.accel = 10;
-    this.decel = 15;
+    this.moveSpeed = 3;
+    this.maxSpeed = 200;
+    this.drag = 0.95;
     this.facingRight = true;
 
     // Jump
     this.jumps = 2;
-    this.jumpSpeed = 800;
+    this.jumpHeight = 100;
     this.isOnGround = false;
-
-    this.graphics.use(sprite);
+    this.coyote = 0.08;
+    this.coyoteTimer = 0;
   }
   onInitialize(engine) {
-    this.currentSpeed = 0;
-    this.newSpeed = 0;
-    this.pos = new Vector(engine.drawWidth / 2, engine.drawHeight / 2);
+    this.pos = new Vector(3, 0);
 
     // Check if on ground
     this.on("collisionstart", (event) => this.hitSomething(event));
     this.on("collisionend", (event) => this.leaveSomething(event));
+
+    engine.currentScene.camera.strategy.radiusAroundActor(
+      this.body,
+      engine.drawWidth / 8,
+    );
   }
 
-  onPreUpdate(engine) {
-    // Check which way player is moving
-
-    if (this.currentSpeed > 0) {
-      this.facingRight = true;
-    } else if (this.currentSpeed < 0) {
-      this.facingRight = false;
+  onPreUpdate(engine, delta) {
+    // Die when falling in pit
+    if (this.pos.y > 500) {
+      this.kill();
     }
 
     // Inputs
-    this.keyHeld = false;
-    if (engine.input.keyboard.isHeld(Keys.D)) {
-      this.keyHeld = true;
+    const leftKey = engine.input.keyboard.isHeld(Keys.A);
+    const rightKey = engine.input.keyboard.isHeld(Keys.D);
+    const jumpKey = engine.input.keyboard.wasPressed(Keys.Space);
 
-      if (this.currentSpeed < this.topSpeed) {
-        this.currentSpeed += this.accel;
-      }
-    }
-    if (engine.input.keyboard.isHeld(Keys.A)) {
-      this.keyHeld = true;
-
-      if (this.currentSpeed > -this.topSpeed) {
-        this.currentSpeed -= this.accel;
-      }
+    // Movement
+    if (rightKey) {
+      this.body.applyLinearImpulse(new Vector(this.moveSpeed * delta, 0));
+      this.facingRight = true;
+    } else if (leftKey) {
+      this.body.applyLinearImpulse(new Vector(-this.moveSpeed * delta, 0));
+      this.facingRight = false;
     }
 
-    if (engine.input.keyboard.wasPressed(Keys.Space)) {
-      if (this.jumps > 0) {
-        this.vel = new Vector(this.currentSpeed, -this.jumpSpeed);
+    // Deceleration
+    else {
+      this.body.vel = new Vector(this.body.vel.x * this.drag, this.body.vel.y);
+      if (Math.abs(this.body.vel.x) < 20) {
+        this.body.vel.x = 0;
+      }
+    }
+
+    // Limit speed
+    if (Math.abs(this.body.vel.x) > this.maxSpeed) {
+      this.body.vel.x = Math.sign(this.body.vel.x) * this.maxSpeed;
+    }
+
+    // Coyote
+    if (this.coyoteTimer > 0) {
+      this.coyoteTimer -= 0.001 * delta;
+      if (this.coyoteTimer <= 0) {
+        this.coyoteTimer = 0;
         this.isOnGround = false;
+
+        // Remove first jump when walking off platform
+        if (this.jumps > 1) {
+          this.jumps--;
+        }
+      }
+    }
+
+    // Jumping
+    if (jumpKey) {
+      if (this.jumps > 0) {
+        if (this.body.vel.y > 0) {
+          this.body.vel.y = 0;
+        }
+        this.body.applyLinearImpulse(new Vector(0, -this.jumpHeight * delta));
+        this.coyoteTimer = 0;
         this.jumps--;
       }
     }
-
-    if (!this.keyHeld) {
-      if (this.facingRight) {
-        this.currentSpeed -= this.decel;
-      } else {
-        this.currentSpeed += this.decel;
-      }
-      if (Math.abs(this.currentSpeed) < this.decel) {
-        this.currentSpeed = 0;
-      }
-    }
-    this.vel = new Vector(this.currentSpeed, this.vel.y);
   }
 
+  // Check if player is on ground
   hitSomething(event) {
-    if (event.other.owner instanceof Floor) {
+    if (this.vel.y === 0) {
       this.jumps = 2;
       this.isOnGround = true;
+      this.coyoteTimer = 0;
     }
   }
 
+  //Trigger coyote timer when leaving ground
   leaveSomething(event) {
-    if (event.other.owner instanceof Floor) {
-      this.isOnGround = false;
-    }
+    this.coyoteTimer = this.coyote;
   }
 }
