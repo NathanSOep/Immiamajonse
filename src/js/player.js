@@ -12,7 +12,10 @@ import {Resources} from "./resources.js";
 
 export class Player extends Actor {
   // Speed
-  moveSpeed;
+  currentSpeed;
+  walkSpeed;
+  sprintSpeed;
+  sprintAccel;
   facingRight;
   newSpeed;
   drag;
@@ -24,21 +27,26 @@ export class Player extends Actor {
   coyote;
   constructor() {
     super({
-      width: 16,
-      height: 16,
+      width: 32,
+      height: 32,
       collisionType: CollisionType.Active,
       color: Color.Red,
     });
 
     // Movement
     this.moveSpeed = 3;
-    this.maxSpeed = 200;
+    this.walkSpeed = 100;
+    this.sprintSpeed = 250;
+    this.sprintAccel = 4;
+    this.currentSpeed = this.walkSpeed;
+
+    this.sprintDuration = 0.5;
     this.drag = 0.95;
     this.facingRight = true;
 
     // Jump
     this.jumps = 2;
-    this.jumpHeight = 100;
+    this.jumpHeight = 120;
     this.isOnGround = false;
     this.coyote = 0.08;
     this.coyoteTimer = 0;
@@ -46,7 +54,7 @@ export class Player extends Actor {
   onInitialize(engine) {
     this.pos = new Vector(3, 0);
     this.graphics.use(
-      Resources.Indiana.toSprite({destSize: {width: 16, height: 16}}),
+      Resources.Indiana.toSprite({destSize: {width: 32, height: 32}}),
     );
 
     // Check if on ground
@@ -69,7 +77,16 @@ export class Player extends Actor {
     const leftKey = engine.input.keyboard.isHeld(Keys.A);
     const rightKey = engine.input.keyboard.isHeld(Keys.D);
     const jumpKey = engine.input.keyboard.wasPressed(Keys.Space);
+    const sprintKey = engine.input.keyboard.isHeld(Keys.ShiftLeft);
 
+    // Sprint
+    if (sprintKey) {
+      if (this.currentSpeed < this.sprintSpeed) {
+        this.currentSpeed += this.sprintAccel;
+      }
+    } else if (this.currentSpeed > this.walkSpeed) {
+      this.currentSpeed -= this.sprintAccel;
+    }
     // Movement
     if (rightKey) {
       this.body.applyLinearImpulse(new Vector(this.moveSpeed * delta, 0));
@@ -78,7 +95,6 @@ export class Player extends Actor {
       this.body.applyLinearImpulse(new Vector(-this.moveSpeed * delta, 0));
       this.facingRight = false;
     }
-
     // Deceleration
     else {
       this.body.vel = new Vector(this.body.vel.x * this.drag, this.body.vel.y);
@@ -88,8 +104,8 @@ export class Player extends Actor {
     }
 
     // Limit speed
-    if (Math.abs(this.body.vel.x) > this.maxSpeed) {
-      this.body.vel.x = Math.sign(this.body.vel.x) * this.maxSpeed;
+    if (Math.abs(this.body.vel.x) > this.currentSpeed) {
+      this.body.vel.x = Math.sign(this.body.vel.x) * this.currentSpeed;
     }
 
     // Coyote
