@@ -4,8 +4,12 @@ import {TiledResource} from "@excaliburjs/plugin-tiled";
 const Resources = {
   // Sprites
   Indiana: new ImageSource("images/indiana.png"),
+  Snake: new ImageSource("images/snake.png"),
+  Trophy: new ImageSource("images/trophy.png"),
+  Jabloon: new ImageSource("images/jabloon.png"),
   //Tiles
-  Level1: new TiledResource("/tilesets/level1.tmx", {strict: false}),
+  Geometry: new TiledResource("/tilesets/level1.tmx", {strict: false}),
+
 };
 
 const ResourceLoader = new Loader();

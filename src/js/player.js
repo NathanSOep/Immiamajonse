@@ -9,9 +9,10 @@ import {
 } from "excalibur";
 import {Floor} from "./floor.js";
 import {Resources} from "./resources.js";
+import {Enemy} from "./enemy.js";
 
 export class Player extends Actor {
-  // Speed
+  // Speed Variables
   currentSpeed;
   walkSpeed;
   sprintSpeed;
@@ -20,7 +21,7 @@ export class Player extends Actor {
   newSpeed;
   drag;
 
-  // Jumps
+  // Jump Variables
   jumpHeight;
   jumps;
   isOnGround;
@@ -61,6 +62,7 @@ export class Player extends Actor {
     this.on("collisionstart", (event) => this.hitSomething(event));
     this.on("collisionend", (event) => this.leaveSomething(event));
 
+    // Camera follows player
     engine.currentScene.camera.strategy.radiusAroundActor(
       this.body,
       engine.drawWidth / 8,
@@ -71,6 +73,7 @@ export class Player extends Actor {
     // Die when falling in pit
     if (this.pos.y > 500) {
       this.kill();
+      engine.death();
     }
 
     // Inputs
@@ -135,9 +138,9 @@ export class Player extends Actor {
     }
   }
 
-  // Check if player is on ground
-  hitSomething(event) {
-    if (this.vel.y === 0) {
+  // Collision Detection
+  hitSomething(event, delta) {
+    if (this.vel.y === 0 || event.other instanceof Enemy) {
       this.jumps = 2;
       this.isOnGround = true;
       this.coyoteTimer = 0;
@@ -147,5 +150,9 @@ export class Player extends Actor {
   //Trigger coyote timer when leaving ground
   leaveSomething(event) {
     this.coyoteTimer = this.coyote;
+  }
+
+  collectJabloon() {
+    console.log("Player collected a Jabloon");
   }
 }

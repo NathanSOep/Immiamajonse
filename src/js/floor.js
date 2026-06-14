@@ -10,7 +10,7 @@ export class Floor extends Actor {
     const sprite = new Rectangle({
       width: 5000,
       height: 30,
-      color: Color.Gray,
+      color: Color.Black,
     });
     this.graphics.use(sprite);
   }
