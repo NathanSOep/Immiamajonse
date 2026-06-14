@@ -20,6 +20,12 @@ export class VictoryLevel extends Scene {
             text: `Jabloons collected: ${engine.jabloons}`,
             color: Color.White,
         });
+
+        const bestScore = Number(localStorage.getItem("bestScore") || 0);
+        if (engine.jabloons > bestScore) {
+            localStorage.setItem("bestScore", engine.jabloons);
+        }
+
         this.highscoreLabel = new Label({
             pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2 + 120),
             anchor: new Vector(0.5, 0.5),
@@ -29,5 +35,6 @@ export class VictoryLevel extends Scene {
         this.add(this.victoryLabel);
         this.add(this.scoreLabel);
         this.add(this.highscoreLabel);
+        
     }
 }
