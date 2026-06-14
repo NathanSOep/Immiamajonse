@@ -55,7 +55,6 @@ export class Game extends Engine {
 
   death() {
     this.lives--;
-    console.log(`Lives remaining: ${this.lives}`);
     if (this.lives > 0) {
       this.goToScene("tryAgainLevel");
     } else {
@@ -64,7 +63,6 @@ export class Game extends Engine {
   }
   addJabloon() {
     this.jabloons++;
-    console.log(`Jabloons collected: ${this.jabloons}`);
   }
 }
 

@@ -59,7 +59,6 @@ export class Level1 extends Scene {
 
     // Trophy
     this.add(new Trophy(1500, -220));
-    this.add(new Trophy(0, 0));
 
     // HUD
     // Lives

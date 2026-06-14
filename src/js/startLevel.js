@@ -21,7 +21,6 @@ export class StartLevel extends Scene {
         startButton.on("pointerdown", () => this.clickHandler());
     }
     clickHandler() {
-        console.log("Start button clicked");
         this.engine.goToScene("level1");
     }
 }

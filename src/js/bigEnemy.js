@@ -9,7 +9,6 @@ export class BigEnemy extends Enemy  {
     }
     onInitialize(engine) {
         super.onInitialize(engine);
-        console.log("Big Enemy Initialized");
         const sprite = Resources.Snake.toSprite({ destSize: { width: 64, height: 64 } });
         sprite.tint = Color.Red;
         this.graphics.use(sprite);

@@ -151,8 +151,4 @@ export class Player extends Actor {
   leaveSomething(event) {
     this.coyoteTimer = this.coyote;
   }
-
-  collectJabloon() {
-    console.log("Player collected a Jabloon");
-  }
 }

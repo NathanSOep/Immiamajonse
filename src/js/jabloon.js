@@ -24,7 +24,6 @@ export class Jabloon extends Actor {
 
   hitSomething(event, engine) {
     if (event.other.owner instanceof Player) {
-      console.log("Player collected a Jabloon");
       engine.addJabloon();
       if (engine.currentScene?.jabloonsLabel) {
         engine.currentScene.jabloonsLabel.text = `Jabloons: ${engine.jabloons}`;
