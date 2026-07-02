@@ -8,8 +8,7 @@ const Resources = {
   Trophy: new ImageSource("images/trophy.png"),
   Jabloon: new ImageSource("images/jabloon.png"),
   //Tiles
-  Geometry: new TiledResource("/tilesets/level1.tmx", {strict: false}),
-
+  Geometry: new TiledResource("/tilesets/level1.tmj", {strict: false}),
 };
 
 const ResourceLoader = new Loader();

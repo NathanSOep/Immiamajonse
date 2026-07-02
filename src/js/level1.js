@@ -21,9 +21,9 @@ import {Trophy} from "./trophy.js";
 
 export class Level1 extends Scene {
   livesLabel;
- jabloonsLabel;
+  jabloonsLabel;
 
-    onActivate(_context) {
+  onActivate(_context) {
     this.add(new Player());
 
     // Update HUD
@@ -43,22 +43,21 @@ export class Level1 extends Scene {
     Resources.Geometry.addToScene(this.engine.currentScene);
 
     // Enemies
-    this.add(new Enemy(320, -32, 256, 370));
-    this.add(new Enemy(170, -12, 5, 170));
-    this.add(new Enemy(831, -90, 830, 890));
-    this.add(new Enemy(1300, -170));
-    this.add(new BigEnemy(480, -32, 450, 480));
+    this.add(new Enemy(320, 170, 256, 370));
+    this.add(new Enemy(128, 170, 5, 128));
+    this.add(new Enemy(850, 90, 785, 850));
+    this.add(new BigEnemy(420, 150, 420, 440));
 
     // Jabloon
-    this.add(new Jabloon(720, -80));
-    this.add(new Jabloon(215, -120));
-    this.add(new Jabloon(470, -120));
-    this.add(new Jabloon(470, 10));
-    this.add(new Jabloon(860, -220));
-    this.add(new Jabloon(1280, -95));
+    this.add(new Jabloon(175, 50));
+    this.add(new Jabloon(430, 50));
+    this.add(new Jabloon(430, 185));
+    this.add(new Jabloon(690, 135));
+    this.add(new Jabloon(1150, 85));
+    this.add(new Jabloon(1240, 80));
 
     // Trophy
-    this.add(new Trophy(1500, -220));
+    this.add(new Trophy(1450, 40));
 
     // HUD
     // Lives
@@ -73,7 +72,7 @@ export class Level1 extends Scene {
     this.add(this.livesLabel);
 
     // Jabloons
-     this.jabloonsLabel = new Label({
+    this.jabloonsLabel = new Label({
       pos: new Vector(20, 30),
       text: `Jabloons: ${this.engine.jabloons}`,
       color: Color.White,
@@ -86,5 +85,4 @@ export class Level1 extends Scene {
     // Camera FOV
     this.engine.currentScene.camera.zoom = 2;
   }
-
 }
