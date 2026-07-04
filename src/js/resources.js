@@ -1,5 +1,7 @@
-import {ImageSource, Sound, Resource, Loader, Sprite} from "excalibur";
+import {ImageSource, Loader} from "excalibur";
 import {TiledResource} from "@excaliburjs/plugin-tiled";
+
+const tiledMapPath = `${import.meta.env.BASE_URL}tilesets/level1.tmj`;
 
 const Resources = {
   // Sprites
@@ -8,7 +10,7 @@ const Resources = {
   Trophy: new ImageSource("images/trophy.png"),
   Jabloon: new ImageSource("images/jabloon.png"),
   //Tiles
-  Geometry: new TiledResource("/tilesets/level1.tmj", {strict: false}),
+  Geometry: new TiledResource(tiledMapPath, {strict: false}),
 };
 
 const ResourceLoader = new Loader();
